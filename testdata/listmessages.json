@@ -1,0 +1,83 @@
+[
+  {
+    "id": 3423093,
+    "created_at": "2015-02-05T13:23:08.111Z",
+    "updated_at": "2015-02-05T13:23:08.111Z",
+    "conversation_id": null,
+    "stream_id": 48914,
+    "mentions": [],
+    "author": {
+      "id": 50654,
+      "name": "Herman Schaaf",
+      "avatar": "https://www.gravatar.com/avatar/5bac7aec948f32f5cba93845a1067ac5?d=https%3A%2F%2Ftiley.herokuapp.com%2Favatar%2F50654%2FHS.png&s=300",
+      "type": "user",
+      "support": false
+    },
+    "type": "message",
+    "text": "",
+    "attachments": [
+      {
+        "id": 206099,
+        "url": "https://api.sqwiggle.com/attachments/206099/view",
+        "title": "gophercolor.png",
+        "animated": false,
+        "type": "image",
+        "image": "https://sqwiggle-user-uploads.s3.amazonaws.com/50654/upload/357a85218d42a828ea9f86e6ba7052791f03279a/ea2356d4d8dd7d1e1a3f7087b1afa2adc2805206/gophercolor.png?AWSAccessKeyId=AKIAJFI2SGVUO7BH3ZFA&Expires=1423146200&Signature=cMoHIfSF6w%2FQGuzOWx9ZxEdlhkQ%3D",
+        "status": "uploaded",
+        "width": 3861,
+        "height": 3861,
+        "created_at": "2015-02-05T13:23:08.115Z",
+        "updated_at": "2015-02-05T13:23:11.163Z"
+      }
+    ]
+  },
+  {
+    "id": 3423091,
+    "created_at": "2015-02-05T13:22:59.830Z",
+    "updated_at": "2015-02-05T13:22:59.830Z",
+    "conversation_id": null,
+    "stream_id": 48914,
+    "mentions": [
+      {
+        "subject_type": "user",
+        "subject_id": 50665,
+        "text": "trin",
+        "name": "trin",
+        "indices": [
+          16,
+          20
+        ],
+        "message_id": 3423091,
+        "id": 50665
+      }
+    ],
+    "author": {
+      "id": 50654,
+      "name": "Herman Schaaf",
+      "avatar": "https://www.gravatar.com/avatar/5bac7aec948f32f5cba93845a1067ac5?d=https%3A%2F%2Ftiley.herokuapp.com%2Favatar%2F50654%2FHS.png&s=300",
+      "type": "user",
+      "support": false
+    },
+    "type": "message",
+    "text": "This is a test, trin",
+    "attachments": []
+  },
+  {
+    "id": 3421093,
+    "created_at": "2015-02-05T08:55:03.477Z",
+    "updated_at": "2015-02-05T08:55:03.477Z",
+    "conversation_id": null,
+    "stream_id": 48914,
+    "mentions": [],
+    "author": {
+      "id": 50654,
+      "name": "Herman Schaaf",
+      "avatar": "https://www.gravatar.com/avatar/5bac7aec948f32f5cba93845a1067ac5?d=https%3A%2F%2Ftiley.herokuapp.com%2Favatar%2F50654%2FHS.png&s=300",
+      "type": "user",
+      "support": false
+    },
+    "type": "message",
+    "text": "bye!",
+    "attachments": []
+  }
+]
