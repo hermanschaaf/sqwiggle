@@ -1,0 +1,6 @@
+{
+    "type": "authentication",
+    "message": "Sorry, your account could not be authenticated",
+    "details": "Did you provide an auth_token? For details on how to authorize with the API please see our documentation here: https://www.sqwiggle.com/docs/overview/authentication",
+    "param": ""
+}

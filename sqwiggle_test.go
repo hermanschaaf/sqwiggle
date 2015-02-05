@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -131,4 +132,25 @@ func Test_ListMessages_Success(t *testing.T) {
 		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
 	}
 
+}
+
+func Test_ListMessages_Failure(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/error.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, client := setupTestServer(400, dummy)
+	defer server.Close()
+
+	_, err = client.ListMessages(0, 0)
+	wantErr := Error{
+		Type:    ErrAuthentication,
+		Message: "Sorry, your account could not be authenticated",
+		Details: "Did you provide an auth_token? For details on how to authorize with the API please see our documentation here: https://www.sqwiggle.com/docs/overview/authentication",
+		Param:   "",
+	}
+	if !reflect.DeepEqual(err, wantErr) {
+		t.Errorf("err = %v, want %+v (Error struct)", err, wantErr)
+	}
 }

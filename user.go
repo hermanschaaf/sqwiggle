@@ -36,6 +36,10 @@ const (
 	RoleBanned           = "banned"
 )
 
+func (ur UserRole) String() string {
+	return string(ur)
+}
+
 // UserStatus describes the current status of the user
 type UserStatus string
 
