@@ -1,0 +1,75 @@
+// Package sqwiggle provides a simplified interface to the Sqwiggle API
+package sqwiggle
+
+import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strconv"
+
+	_ "crypto/sha512" // for verifying signature from COMODO RSA Certification Authority
+)
+
+// Client is the main struct used to interface with the API.
+// API methods are implemented as methods on this struct, and so
+// the first step of any interaction with the API client must be
+// to insantiate this struct. This can be done using the NewClient
+// function.
+type Client struct {
+	apiKey  string
+	rootURL string
+}
+
+// NewClient returns a new Client, which can be used to interface
+// with the API. It takes only an APIKey string as single argument.
+func NewClient(APIKey string) *Client {
+	rootURL := "https://api.sqwiggle.com/"
+	return &Client{apiKey: APIKey, rootURL: rootURL}
+}
+
+// get takes a path string and performs a GET request to the specified
+// path for this client, and returns the result as a byte slice, or an
+// not-nil error if something went wrong during the request.
+func (c *Client) get(path string, page, limit int) ([]byte, error) {
+	u, err := url.Parse(c.rootURL)
+	if err != nil {
+		return nil, err
+	}
+	u.Path = path
+
+	params := u.Query()
+	if page > 0 {
+		// add page parameter if set
+		params.Add("page", strconv.Itoa(page))
+	}
+	if limit > 0 {
+		// add limit parameter if set
+		params.Add("limit", strconv.Itoa(limit))
+	}
+	u.RawQuery = params.Encode()
+
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	req.SetBasicAuth(c.apiKey, "X")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	contents, err := ioutil.ReadAll(resp.Body)
+	return contents, err
+}
+
+// List returns the reponse for GET /messages
+func (c *Client) ListMessages(page, limit int) ([]Message, error) {
+	p := "/messages"
+	b, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	var m []Message
+	err = json.Unmarshal(b, &m)
+	return m, err
+}
