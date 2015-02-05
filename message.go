@@ -10,7 +10,10 @@ type Message struct {
 	Text        string       `json:"text"`        // The plain text content of the message, HTML will be escaped
 	Author      User         `json:"author"`      // An object representing the user or API client that created the message
 	Attachments []Attachment `json:"attachments"` // A list of Attachment objects to be displayed with this message
-	Mentions    []User       `json:"mentions"`    // A list of users tagged / mentioned in this message
+	Mentions    []Mention    `json:"mentions"`    // A list of users tagged / mentioned in this message
 	CreatedAt   time.Time    `json:"created_at"`  // The time that this message was created
-	updated_at  time.Time    `json:"updated_at"`  // The time that this message was last updated or edited
+	UpdatedAt   time.Time    `json:"updated_at"`  // The time that this message was last updated or edited
+
+	// Undocumented
+	ConversationID *int `json:"conversation_id,omitempty"`
 }

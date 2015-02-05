@@ -11,28 +11,34 @@ import (
 	_ "crypto/sha512" // for verifying signature from COMODO RSA Certification Authority
 )
 
+var timeFmt = "2006-01-02T15:04:05.999Z"
+
 // Client is the main struct used to interface with the API.
 // API methods are implemented as methods on this struct, and so
 // the first step of any interaction with the API client must be
 // to insantiate this struct. This can be done using the NewClient
 // function.
 type Client struct {
-	apiKey  string
-	rootURL string
+	APIKey     string
+	RootURL    string
+	HTTPClient *http.Client
 }
 
-// NewClient returns a new Client, which can be used to interface
+// NewClient returns a new Client with sensible defaults, which can be used to interface
 // with the API. It takes only an APIKey string as single argument.
 func NewClient(APIKey string) *Client {
-	rootURL := "https://api.sqwiggle.com/"
-	return &Client{apiKey: APIKey, rootURL: rootURL}
+	return &Client{
+		APIKey:     APIKey,
+		RootURL:    "https://api.sqwiggle.com/",
+		HTTPClient: &http.Client{},
+	}
 }
 
 // get takes a path string and performs a GET request to the specified
 // path for this client, and returns the result as a byte slice, or an
 // not-nil error if something went wrong during the request.
 func (c *Client) get(path string, page, limit int) ([]byte, error) {
-	u, err := url.Parse(c.rootURL)
+	u, err := url.Parse(c.RootURL)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +57,7 @@ func (c *Client) get(path string, page, limit int) ([]byte, error) {
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", u.String(), nil)
-	req.SetBasicAuth(c.apiKey, "X")
+	req.SetBasicAuth(c.APIKey, "X")
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -71,5 +77,6 @@ func (c *Client) ListMessages(page, limit int) ([]Message, error) {
 	}
 	var m []Message
 	err = json.Unmarshal(b, &m)
+
 	return m, err
 }

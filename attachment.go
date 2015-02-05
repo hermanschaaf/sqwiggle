@@ -32,8 +32,12 @@ type Attachment struct {
 	Title       string         `json:"title"`       // A title for the attachment, for example a filename or webpage title
 	Description string         `json:"description"` // A description of the attachment, for example a web page summary
 	Image       string         `json:"image"`       // URL of an image representing the attachment, this may not reside on Sqwiggle's servers
-	status      string         `json:"status"`      // If an upload, denotes the uploade status ('pending' or 'uplodaed')
-	animated    bool           `json:"animated"`    // If an image, denotes whether animated
-	created_at  time.Time      `json:"created_at"`  // The time that this attachment was created
-	updated_at  time.Time      `json:"updated_at"`  // The time that this attachment was last updated or edited
+	Status      string         `json:"status"`      // If an upload, denotes the uploade status ('pending' or 'uplodaed')
+	Animated    bool           `json:"animated"`    // If an image, denotes whether animated
+	CreatedAt   time.Time      `json:"created_at"`  // The time that this attachment was created
+	UpdatedAt   time.Time      `json:"updated_at"`  // The time that this attachment was last updated or edited
+
+	// undocumented:
+	Width  int `json:"width,omitempty"`
+	Height int `json:"height,omitempty"`
 }

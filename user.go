@@ -20,6 +20,10 @@ type User struct {
 	CreatedAt        time.Time  `json:"created_at"`        // The time this user was created
 	LastActiveAt     time.Time  `json:"last_active_at"`    // The last time we recorded activity for a user
 	LastConnectedAt  time.Time  `json:"last_connected_at"` // The time this users current online session started
+
+	// undocumented:
+	Type    UserType `json:"type,omitempty"`
+	Support bool     `json:"support,omitempty"` // Indicates whether user is support or not (undocumented)
 }
 
 // UserRole describes the role of a user, i.e. normal user, owner, manager or banned
@@ -38,4 +42,12 @@ type UserStatus string
 const (
 	StatusBusy      UserStatus = "busy"
 	StatusAvailable            = "available"
+)
+
+// UserType describes the type of user, i.e. normal user or support
+type UserType string
+
+const (
+	TypeUser    UserType = "user"
+	TypeSupport          = "support"
 )
