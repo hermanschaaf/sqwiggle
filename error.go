@@ -22,6 +22,8 @@ func (e ErrorType) String() string {
 	return string(e)
 }
 
+// These errors define the types of errors expected to be returned
+// by the Sqwiggle API.
 const (
 	ErrAuthentication ErrorType = "authentication"
 	ErrAuthorization            = "authorization"

@@ -29,6 +29,8 @@ type User struct {
 // UserRole describes the role of a user, i.e. normal user, owner, manager or banned
 type UserRole string
 
+// These UserRole constants define the possible user roles that
+// can be returned by the API.
 const (
 	RoleUser    UserRole = "user"
 	RoleOwner            = "owner"
@@ -43,6 +45,8 @@ func (ur UserRole) String() string {
 // UserStatus describes the current status of the user
 type UserStatus string
 
+// The below UserStatus constants define the typical states a user may
+// be in, i.e. "busy" or "available".
 const (
 	StatusBusy      UserStatus = "busy"
 	StatusAvailable            = "available"
@@ -51,6 +55,8 @@ const (
 // UserType describes the type of user, i.e. normal user or support
 type UserType string
 
+// The below UserType constants define the known UserTypes that may
+// be returned by the API.
 const (
 	TypeUser    UserType = "user"
 	TypeClient           = "client"

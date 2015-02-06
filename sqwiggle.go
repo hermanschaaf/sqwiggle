@@ -142,6 +142,9 @@ func (c *Client) GetMessage(id int) (Message, error) {
 	return m, err
 }
 
+// PostMessageOptions is a struct that can be optionally passed to the
+// Client.PostMessage method. It defines the optional parameters available
+// for the /messages POST endpoint.
 type PostMessageOptions struct {
 	Format string // Set this parameter to 'html' to allow a subset of HTML tags in the message
 	Parse  bool   // Whether links in the message should be converted to rich attachments
