@@ -257,3 +257,52 @@ func (c *Client) GetStream(id int) (Stream, error) {
 	err = json.Unmarshal(b, &s)
 	return s, err
 }
+
+// PostStream creates a new stream for the organization.
+// Streams can be created from the app interfaces, or programatically via the API.
+// Sqwiggle currently has no restrictions on the number of chat streams
+// you can create within an organization.
+func (c *Client) PostStream(name string) (Stream, error) {
+	form := url.Values{}
+	form.Add("name", name)
+	b, status, err := c.request("/streams", "POST", form)
+	if err != nil {
+		return Stream{}, err
+	}
+	if status != http.StatusCreated {
+		return Stream{}, handleError(b)
+	}
+	var s Stream
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// UpdateStream updates the specified stream by setting the values of
+// the parameters passed. At this time the only parameter that can be
+// changed is the name, paths will be automatically generated.
+func (c *Client) UpdateStream(id int, name string) (Stream, error) {
+	form := url.Values{}
+	form.Add("name", name)
+	b, status, err := c.request(fmt.Sprintf("/streams/%d", id), "PUT", form)
+	if err != nil {
+		return Stream{}, err
+	}
+	if status != http.StatusOK {
+		return Stream{}, handleError(b)
+	}
+	var m Stream
+	err = json.Unmarshal(b, &m)
+	return m, err
+}
+
+// DeleteStream removes the chat stream from the organisation.
+func (c *Client) DeleteStream(id int) error {
+	b, status, err := c.request(fmt.Sprintf("/streams/%d", id), "DELETE", url.Values{})
+	if err != nil {
+		return err
+	}
+	if status != http.StatusNoContent {
+		return handleError(b)
+	}
+	return nil
+}

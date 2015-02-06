@@ -283,7 +283,7 @@ func Test_PostMessage_Success(t *testing.T) {
 	validateMessage(t, m)
 }
 
-// Test_UpdateMessage_Success instantiates a new Client and calls the PostMessage method.
+// Test_UpdateMessage_Success instantiates a new Client and calls the UpdateMessage method.
 func Test_UpdateMessage_Success(t *testing.T) {
 	dummy, err := ioutil.ReadFile("testdata/postmessage.json")
 	if err != nil {
@@ -318,8 +318,8 @@ func Test_DeleteMessage_Success(t *testing.T) {
 	}
 }
 
-// Test_ListMessages_Failure tests a failure case for getting messages
-func Test_ListMessages_Failure(t *testing.T) {
+// Test_Messages_Failure tests failure cases for message endpoints
+func Test_Messages_Failure(t *testing.T) {
 	dummy, err := ioutil.ReadFile("testdata/error.json")
 	if err != nil {
 		t.Fatal(err)
@@ -329,15 +329,39 @@ func Test_ListMessages_Failure(t *testing.T) {
 	server, client := setupTestServer(400, dummy, func(r *http.Request) {})
 	defer server.Close()
 
-	_, err = client.ListMessages(0, 0)
+	funcs := []func() error{
+		func() error {
+			_, err := client.ListMessages(0, 0)
+			return err
+		},
+		func() error {
+			_, err := client.GetMessage(123)
+			return err
+		},
+		func() error {
+			_, err := client.PostMessage(1, "text", nil)
+			return err
+		},
+		func() error {
+			_, err := client.UpdateMessage(1, "text")
+			return err
+		},
+		func() error {
+			return client.DeleteMessage(1)
+		},
+	}
+
 	wantErr := Error{
 		Type:    ErrAuthentication,
 		Message: "Sorry, your account could not be authenticated",
 		Details: "Did you provide an auth_token? For details on how to authorize with the API please see our documentation here: https://www.sqwiggle.com/docs/overview/authentication",
 		Param:   "",
 	}
-	if !reflect.DeepEqual(err, wantErr) {
-		t.Errorf("err = %v, want %+v (Error struct)", err, wantErr)
+	for i := range funcs {
+		err := funcs[i]()
+		if !reflect.DeepEqual(err, wantErr) {
+			t.Errorf("err = %v, want %+v (Error struct)", err, wantErr)
+		}
 	}
 }
 
@@ -346,6 +370,30 @@ func Test_ListMessages_Failure(t *testing.T) {
   Streams
 
 *************************************************************************/
+
+func validateStream(t *testing.T, s Stream) {
+	want := Stream{
+		ID:          48914,
+		UserID:      50654,
+		Name:        "IronZebra",
+		Path:        "ironzebra",
+		Icon:        "",
+		IconColor:   "",
+		CreatedAt:   time.Date(2015, time.February, 5, 4, 53, 5, 958000000, time.UTC),
+		Status:      StreamStatusActive,
+		Type:        StreamTypeStandard,
+		Description: "",
+		Subscribed:  true,
+	}
+
+	diff, err := compare(s, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
 
 // Test_ListStreams_Success instantiates a new Client and calls the ListStreams method
 // to return the available streams.
@@ -371,28 +419,7 @@ func Test_ListStreams_Success(t *testing.T) {
 		t.Fatalf("len(s) = %d, want %d", len(s), 3)
 	}
 
-	wantFirstStream := Stream{
-		ID:          48914,
-		UserID:      50654,
-		Name:        "IronZebra",
-		Path:        "ironzebra",
-		Icon:        "",
-		IconColor:   "",
-		CreatedAt:   time.Date(2015, time.February, 5, 4, 53, 5, 958000000, time.UTC),
-		Status:      StreamStatusActive,
-		Type:        StreamTypeStandard,
-		Description: "",
-		Subscribed:  true,
-	}
-
-	// compare the first stream to our expectation
-	diff, err := compare(s[0], wantFirstStream)
-	if err != nil {
-		t.Fatal("Failed to compare structs:", err)
-	}
-	for k, d := range diff {
-		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
-	}
+	validateStream(t, s[0])
 }
 
 // Test_GetStream_Success instantiates a new Client and calls the GetStream method
@@ -412,25 +439,63 @@ func Test_GetStream_Success(t *testing.T) {
 		t.Fatal("got error:", err)
 	}
 
-	want := Stream{
-		ID:          48914,
-		UserID:      50654,
-		Name:        "IronZebra",
-		Path:        "ironzebra",
-		Icon:        "",
-		IconColor:   "",
-		CreatedAt:   time.Date(2015, time.February, 5, 4, 53, 5, 958000000, time.UTC),
-		Status:      StreamStatusActive,
-		Type:        StreamTypeStandard,
-		Description: "",
-		Subscribed:  true,
+	validateStream(t, m)
+}
+
+// Test_PostStream_Success instantiates a new Client and calls the PostStream method.
+func Test_PostStream_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/poststream.json")
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	diff, err := compare(m, want)
-	if err != nil {
-		t.Fatal("Failed to compare structs:", err)
+	wantData := map[string]string{
+		"name": "some_stream",
 	}
-	for k, d := range diff {
-		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+
+	// set up server to return 201 and message
+	server, client := setupTestServer(201, dummy, want(t, "/streams", "POST", wantData))
+	defer server.Close()
+
+	m, err := client.PostStream("some_stream")
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateStream(t, m)
+}
+
+// Test_UpdateStream_Success instantiates a new Client and calls the UpdateStream method.
+func Test_UpdateStream_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/poststream.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"name": "amazing",
+	}
+
+	// set up server to return 200 and message
+	server, client := setupTestServer(200, dummy, want(t, "/streams/3434978", "PUT", wantData))
+	defer server.Close()
+
+	m, err := client.UpdateStream(3434978, "amazing")
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateStream(t, m)
+}
+
+// Test_DeleteStream_Success instantiates a new Client and calls the DeleteStream method.
+func Test_DeleteStream_Success(t *testing.T) {
+	// set up server to return 204 and message
+	server, client := setupTestServer(204, []byte{}, want(t, "/streams/3434978", "DELETE", nil))
+	defer server.Close()
+
+	err := client.DeleteStream(3434978)
+	if err != nil {
+		t.Fatal("got error:", err)
 	}
 }
