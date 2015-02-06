@@ -1,0 +1,43 @@
+[
+  {
+    "id": 48914,
+    "user_id": 50654,
+    "name": "IronZebra",
+    "path": "ironzebra",
+    "icon": null,
+    "icon_color": null,
+    "created_at": "2015-02-05T04:53:05.958Z",
+    "status": "active",
+    "type": "standard",
+    "description": null,
+    "subscribed": true,
+    "position": 0
+  },
+  {
+    "id": 48918,
+    "user_id": 50654,
+    "name": "1cat2e",
+    "path": "1cat2e",
+    "icon": "home",
+    "icon_color": "#ebbf56",
+    "created_at": "2015-02-05T04:59:16.472Z",
+    "status": "active",
+    "type": "standard",
+    "description": null,
+    "subscribed": true,
+    "position": 1
+  },
+  {
+    "id": 48915,
+    "user_id": null,
+    "name": "Support",
+    "path": "support",
+    "icon": "lifebuoy",
+    "icon_color": null,
+    "created_at": "2015-02-05T04:53:06.002Z",
+    "status": "active",
+    "type": "support",
+    "description": null,
+    "subscribed": false
+  }
+]

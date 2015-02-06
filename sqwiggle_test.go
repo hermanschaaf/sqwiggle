@@ -59,6 +59,12 @@ func want(t *testing.T, path, method string, data map[string]string) func(r *htt
 	}
 }
 
+/*************************************************************************
+
+  Messages
+
+*************************************************************************/
+
 // Test_ListMessages_Success instantiates a new Client and calls the ListMessages method
 // to return the most recent messages.
 func Test_ListMessages_Success(t *testing.T) {
@@ -160,28 +166,6 @@ func Test_ListMessages_Success(t *testing.T) {
 		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
 	}
 
-}
-
-func Test_ListMessages_Failure(t *testing.T) {
-	dummy, err := ioutil.ReadFile("testdata/error.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// set up server to return 400 response and dummy error
-	server, client := setupTestServer(400, dummy, func(r *http.Request) {})
-	defer server.Close()
-
-	_, err = client.ListMessages(0, 0)
-	wantErr := Error{
-		Type:    ErrAuthentication,
-		Message: "Sorry, your account could not be authenticated",
-		Details: "Did you provide an auth_token? For details on how to authorize with the API please see our documentation here: https://www.sqwiggle.com/docs/overview/authentication",
-		Param:   "",
-	}
-	if !reflect.DeepEqual(err, wantErr) {
-		t.Errorf("err = %v, want %+v (Error struct)", err, wantErr)
-	}
 }
 
 // Test_GetMessage_Success instantiates a new Client and calls the GetMessage method
@@ -331,5 +315,122 @@ func Test_DeleteMessage_Success(t *testing.T) {
 	err := client.DeleteMessage(3434978)
 	if err != nil {
 		t.Fatal("got error:", err)
+	}
+}
+
+// Test_ListMessages_Failure tests a failure case for getting messages
+func Test_ListMessages_Failure(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/error.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 400 response and dummy error
+	server, client := setupTestServer(400, dummy, func(r *http.Request) {})
+	defer server.Close()
+
+	_, err = client.ListMessages(0, 0)
+	wantErr := Error{
+		Type:    ErrAuthentication,
+		Message: "Sorry, your account could not be authenticated",
+		Details: "Did you provide an auth_token? For details on how to authorize with the API please see our documentation here: https://www.sqwiggle.com/docs/overview/authentication",
+		Param:   "",
+	}
+	if !reflect.DeepEqual(err, wantErr) {
+		t.Errorf("err = %v, want %+v (Error struct)", err, wantErr)
+	}
+}
+
+/*************************************************************************
+
+  Streams
+
+*************************************************************************/
+
+// Test_ListStreams_Success instantiates a new Client and calls the ListStreams method
+// to return the available streams.
+func Test_ListStreams_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/liststreams.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/streams", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListStreams(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 3 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+	}
+
+	wantFirstStream := Stream{
+		ID:          48914,
+		UserID:      50654,
+		Name:        "IronZebra",
+		Path:        "ironzebra",
+		Icon:        "",
+		IconColor:   "",
+		CreatedAt:   time.Date(2015, time.February, 5, 4, 53, 5, 958000000, time.UTC),
+		Status:      StreamStatusActive,
+		Type:        StreamTypeStandard,
+		Description: "",
+		Subscribed:  true,
+	}
+
+	// compare the first stream to our expectation
+	diff, err := compare(s[0], wantFirstStream)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_GetStream_Success instantiates a new Client and calls the GetStream method
+// to return a single stream.
+func Test_GetStream_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getstream.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with three messages
+	server, client := setupTestServer(200, dummy, want(t, "/streams/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetStream(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	want := Stream{
+		ID:          48914,
+		UserID:      50654,
+		Name:        "IronZebra",
+		Path:        "ironzebra",
+		Icon:        "",
+		IconColor:   "",
+		CreatedAt:   time.Date(2015, time.February, 5, 4, 53, 5, 958000000, time.UTC),
+		Status:      StreamStatusActive,
+		Type:        StreamTypeStandard,
+		Description: "",
+		Subscribed:  true,
+	}
+
+	diff, err := compare(m, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
 	}
 }

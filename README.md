@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hermanschaaf/sqwiggle.svg)](https://travis-ci.org/hermanschaaf/sqwiggle)
 
-A Golang client library for the [Squiggle API](https://www.sqwiggle.com/docs/overview/getting-started). 
+A Golang client library for the [Sqwiggle API](https://www.sqwiggle.com/docs/overview/getting-started). 
 
 Still under development, but early feedback welcome!
 

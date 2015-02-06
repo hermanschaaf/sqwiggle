@@ -216,3 +216,44 @@ func (c *Client) DeleteMessage(id int) error {
 	}
 	return nil
 }
+
+/*************************************************************************
+
+  Streams
+
+*************************************************************************/
+
+// ListStreams returns the reponse for GET /streams.
+// It returns a list of all streams in the current organization.
+// The streams are returned in sorted alphabetical order by default.
+func (c *Client) ListStreams(page, limit int) ([]Stream, error) {
+	p := "/streams"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var s []Stream
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// GetStream returns the reponse for GET /stream/:id.
+// It retrieves the details of any stream that the token
+// has access to. Supply an ID and Sqwiggle will return
+// the corresponding chat stream object.
+func (c *Client) GetStream(id int) (Stream, error) {
+	p := fmt.Sprintf("/streams/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return Stream{}, err
+	}
+	if status != http.StatusOK {
+		return Stream{}, handleError(b)
+	}
+	var s Stream
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
