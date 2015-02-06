@@ -6,13 +6,15 @@ A Golang client library for the [Sqwiggle API](https://www.sqwiggle.com/docs/ove
 
 Still under development, but early feedback welcome!
 
+#### Status:
+
 - [ ] Attachments
 - [ ] Conversations
 - [ ] Info
 - [ ] Invites
 - [x] Messages
 - [ ] Organizations
-- [ ] Streams
+- [x] Streams
 - [ ] Users
 
 MIT License
