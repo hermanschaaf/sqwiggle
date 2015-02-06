@@ -199,3 +199,17 @@ func (c *Client) UpdateMessage(id int, text string) (Message, error) {
 	err = json.Unmarshal(b, &m)
 	return m, err
 }
+
+// DeleteMessage removes the specified message from the stream. So that
+// conversation flow is preserved the message will be replaced with a
+// "This message has been removed" note in the stream.
+func (c *Client) DeleteMessage(id int) error {
+	b, status, err := c.request(fmt.Sprintf("/messages/%d", id), "DELETE", url.Values{})
+	if err != nil {
+		return err
+	}
+	if status != http.StatusNoContent {
+		return handleError(b)
+	}
+	return nil
+}

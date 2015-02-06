@@ -321,3 +321,15 @@ func Test_UpdateMessage_Success(t *testing.T) {
 
 	validateMessage(t, m)
 }
+
+// Test_DeleteMessage_Success instantiates a new Client and calls the DeleteMessage method.
+func Test_DeleteMessage_Success(t *testing.T) {
+	// set up server to return 204 and message
+	server, client := setupTestServer(204, []byte{}, want(t, "/messages/3434978", "DELETE", nil))
+	defer server.Close()
+
+	err := client.DeleteMessage(3434978)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+}
