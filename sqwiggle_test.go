@@ -95,7 +95,7 @@ func Test_ListMessages_Success(t *testing.T) {
 			Support: false,
 		},
 		Attachments: []Attachment{
-			Attachment{
+			{
 				ID:          206099,
 				Type:        TypeImage,
 				URL:         "https://api.sqwiggle.com/attachments/206099/view",
@@ -137,7 +137,7 @@ func Test_ListMessages_Success(t *testing.T) {
 		},
 		Attachments: []Attachment{},
 		Mentions: []Mention{
-			Mention{
+			{
 				SubjectType: TypeUser,
 				SubjectID:   50665,
 				Text:        "trin",
@@ -213,7 +213,7 @@ func Test_GetMessages_Success(t *testing.T) {
 			Support: false,
 		},
 		Attachments: []Attachment{
-			Attachment{
+			{
 				ID:          206099,
 				Type:        TypeImage,
 				URL:         "https://api.sqwiggle.com/attachments/206099/view",
