@@ -53,5 +53,6 @@ type UserType string
 
 const (
 	TypeUser    UserType = "user"
+	TypeClient           = "client"
 	TypeSupport          = "support"
 )
