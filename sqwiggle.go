@@ -69,16 +69,16 @@ func (c *Client) get(path string, page, limit int) (response []byte, statusCode 
 	return contents, resp.StatusCode, err
 }
 
-// post takes a path string and performs a POST request to the specified
+// request takes a path string and performs a request (POST or PUT) to the specified
 // path for this client, and returns the result as a byte slice, or an
 // not-nil error if something went wrong during the request.
-func (c *Client) post(path string, form url.Values) (response []byte, statusCode int, err error) {
+func (c *Client) request(path string, method string, form url.Values) (response []byte, statusCode int, err error) {
 	u, err := url.Parse(c.RootURL)
 	if err != nil {
 		return
 	}
 	u.Path = path
-	req, err := http.NewRequest("POST", u.String(), strings.NewReader(form.Encode()))
+	req, err := http.NewRequest(method, u.String(), strings.NewReader(form.Encode()))
 	req.SetBasicAuth(c.APIKey, "X")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	resp, err := c.HTTPClient.Do(req)
@@ -158,10 +158,10 @@ type PostMessageOptions struct {
 // user_name and user_id with a given users name and id.
 //
 //   @(user_name)[user:user_id]
-func (c *Client) PostMessage(text string, streamID int, options *PostMessageOptions) (Message, error) {
+func (c *Client) PostMessage(streamID int, text string, options *PostMessageOptions) (Message, error) {
 	form := url.Values{}
-	form.Add("text", text)
 	form.Add("stream_id", fmt.Sprintf("%d", streamID))
+	form.Add("text", text)
 	if options != nil {
 		if options.Format != "" {
 			form.Add("format", options.Format)
@@ -170,11 +170,29 @@ func (c *Client) PostMessage(text string, streamID int, options *PostMessageOpti
 			form.Add("parse", fmt.Sprintf("%t", options.Parse))
 		}
 	}
-	b, status, err := c.post("/messages", form)
+	b, status, err := c.request("/messages", "POST", form)
 	if err != nil {
 		return Message{}, err
 	}
 	if status != http.StatusCreated {
+		return Message{}, handleError(b)
+	}
+	var m Message
+	err = json.Unmarshal(b, &m)
+	return m, err
+}
+
+// UpdateMessage updates the specified message by setting the values
+// of the parameters passed. Note that changes made via the API will
+// be immediately reflected in the interface of all connected clients.
+func (c *Client) UpdateMessage(id int, text string) (Message, error) {
+	form := url.Values{}
+	form.Add("text", text)
+	b, status, err := c.request(fmt.Sprintf("/messages/%d", id), "PUT", form)
+	if err != nil {
+		return Message{}, err
+	}
+	if status != http.StatusOK {
 		return Message{}, handleError(b)
 	}
 	var m Message

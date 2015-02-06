@@ -242,33 +242,7 @@ func Test_GetMessages_Success(t *testing.T) {
 	}
 }
 
-// Test_PostMessage_Success instantiates a new Client and calls the PostMessage method.
-func Test_PostMessage_Success(t *testing.T) {
-	dummy, err := ioutil.ReadFile("testdata/postmessage.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data := map[string]string{
-		"text":      "wow",
-		"stream_id": "48914",
-		"format":    "html",
-		"parse":     "true",
-	}
-
-	// set up server to return 201 and message
-	server, client := setupTestServer(201, dummy, want(t, "/messages", "POST", data))
-	defer server.Close()
-
-	options := PostMessageOptions{
-		Format: "html",
-		Parse:  true,
-	}
-	m, err := client.PostMessage("wow", 48914, &options)
-	if err != nil {
-		t.Fatal("got error:", err)
-	}
-
+func validateMessage(t *testing.T, m Message) {
 	want := Message{
 		ID:       3434978,
 		StreamID: 48914,
@@ -293,4 +267,57 @@ func Test_PostMessage_Success(t *testing.T) {
 	for k, d := range diff {
 		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
 	}
+}
+
+// Test_PostMessage_Success instantiates a new Client and calls the PostMessage method.
+func Test_PostMessage_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/postmessage.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"text":      "wow",
+		"stream_id": "48914",
+		"format":    "html",
+		"parse":     "true",
+	}
+
+	// set up server to return 201 and message
+	server, client := setupTestServer(201, dummy, want(t, "/messages", "POST", wantData))
+	defer server.Close()
+
+	options := PostMessageOptions{
+		Format: "html",
+		Parse:  true,
+	}
+	m, err := client.PostMessage(48914, "wow", &options)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateMessage(t, m)
+}
+
+// Test_UpdateMessage_Success instantiates a new Client and calls the PostMessage method.
+func Test_UpdateMessage_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/postmessage.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"text": "amazing",
+	}
+
+	// set up server to return 200 and message
+	server, client := setupTestServer(200, dummy, want(t, "/messages/3434978", "PUT", wantData))
+	defer server.Close()
+
+	m, err := client.UpdateMessage(3434978, "amazing")
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateMessage(t, m)
 }
