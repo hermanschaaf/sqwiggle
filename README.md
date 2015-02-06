@@ -6,4 +6,13 @@ A Go client library for the [Squiggle API](https://www.sqwiggle.com/docs/overvie
 
 Still under development, but early feedback welcome!
 
+- [ ] Attachments
+- [ ] Conversations
+- [ ] Info
+- [ ] Invites
+- [x] Messages
+- [ ] Organizations
+- [ ] Streams
+- [ ] Users
+
 MIT License
