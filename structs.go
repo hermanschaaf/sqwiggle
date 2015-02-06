@@ -16,11 +16,20 @@ type attr struct {
 	b interface{}
 }
 
+var errNilInterface error = fmt.Errorf("One of the interfaces is nil")
+
 // compare compares two structs and returns a map containing the differences between them.
 // This is not optimized for efficiency, and is only meant to be used in testing. It
 // is not a recursive function, and structs within the given struct will be directly
 // compared using reflect.DeepEqual.
 func compare(a interface{}, b interface{}) (diff difference, err error) {
+	// create an attribute data structure as a map of types keyed by a string.
+	diff = difference(make(map[string]attr))
+
+	if a == nil || b == nil {
+		return diff, errNilInterface
+	}
+
 	// if a pointer to a struct is passed, get the type of the dereferenced object
 	typA := reflect.TypeOf(a)
 	aPtr := typA.Kind() == reflect.Ptr
@@ -43,9 +52,6 @@ func compare(a interface{}, b interface{}) (diff difference, err error) {
 	if typB.Kind() != reflect.Struct {
 		return diff, fmt.Errorf("%v type not supported for comparison\n", typB.Kind())
 	}
-
-	// create an attribute data structure as a map of types keyed by a string.
-	diff = difference(make(map[string]attr))
 
 	// get the actual values of A and B, if they happen to be pointers
 	valA := reflect.ValueOf(a)
