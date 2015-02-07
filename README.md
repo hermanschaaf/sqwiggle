@@ -17,4 +17,8 @@ Still under development, but early feedback welcome!
 - [x] Streams
 - [x] Users
 
+See the [sqwiggle_test.go](swiggle_test.go) file for examples usage (until I find time to update the Readme with examples).
+
+***** 
+
 MIT License
