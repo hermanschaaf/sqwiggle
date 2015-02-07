@@ -564,3 +564,96 @@ func (c *Client) DeleteInvite(id int) error {
 	}
 	return nil
 }
+
+/*************************************************************************
+
+  Attachments
+
+*************************************************************************/
+
+// ListAttachments returns a list of all attachments in the current organization.
+// The attachments are returned in reverse date order by default.
+func (c *Client) ListAttachments(page, limit int) ([]Attachment, error) {
+	p := "/attachments"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var s []Attachment
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// GetAttachment retrieves the details of a message attachment. There are many
+// different types of attachments and each type may return different fields in the response.
+func (c *Client) GetAttachment(id int) (Attachment, error) {
+	p := fmt.Sprintf("/attachments/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return Attachment{}, err
+	}
+	if status != http.StatusOK {
+		return Attachment{}, handleError(b)
+	}
+	var s Attachment
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// PostAttachment creates a new attachment for the organization.
+// Attachments can be created from the app interfaces, or programatically via the API.
+// Sqwiggle currently has no restrictions on the number of chat attachments
+// you can create within an organization.
+func (c *Client) PostAttachment(name string) (Attachment, error) {
+	form := url.Values{}
+	form.Add("name", name)
+	b, status, err := c.request("/attachments", "POST", form)
+	if err != nil {
+		return Attachment{}, err
+	}
+	if status != http.StatusCreated {
+		return Attachment{}, handleError(b)
+	}
+	var s Attachment
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// UpdateAttachment updates the specified attachment by setting the values of
+// the parameters passed. Note that changes made via the API will be immediately
+// reflected in the interface of all connected clients.
+//
+// Supported values are all optional:
+//   title	A title for the attachment, for example a filename or webpage title
+//   description	A description of the attachment, for example a web page summary
+//   url	The URL of the attachment, this may not reside on Sqwiggle's servers
+//   image	The URL for an optional preview image
+//   status	If an upload, this string denotes whether the upload is 'pending' or 'uploaded'. (Null if not an upload E.G. a link attachment)
+func (c *Client) UpdateAttachment(id int, form url.Values) (Attachment, error) {
+	b, status, err := c.request(fmt.Sprintf("/attachments/%d", id), "PUT", form)
+	if err != nil {
+		return Attachment{}, err
+	}
+	if status != http.StatusOK {
+		return Attachment{}, handleError(b)
+	}
+	var m Attachment
+	err = json.Unmarshal(b, &m)
+	return m, err
+}
+
+// DeleteAttachment removes the specified attachment from the parent message. If this is the only
+// attachment in the message then the parent message will also be removed.
+func (c *Client) DeleteAttachment(id int) error {
+	b, status, err := c.request(fmt.Sprintf("/attachments/%d", id), "DELETE", url.Values{})
+	if err != nil {
+		return err
+	}
+	if status != http.StatusNoContent {
+		return handleError(b)
+	}
+	return nil
+}

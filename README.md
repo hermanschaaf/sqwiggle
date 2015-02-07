@@ -8,7 +8,7 @@ Still under development, but early feedback welcome!
 
 #### Status:
 
-- [ ] Attachments
+- [x] Attachments
 - [x] Conversations
 - [x] Info
 - [x] Invites
@@ -16,6 +16,8 @@ Still under development, but early feedback welcome!
 - [x] Organizations
 - [x] Streams
 - [x] Users
+
+ALL DONE!! But still need to add some examples to the readme.
 
 See the [sqwiggle_test.go](swiggle_test.go) file for examples usage (until I find time to update the Readme with examples).
 

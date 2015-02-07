@@ -556,7 +556,7 @@ func Test_ListUsers_Success(t *testing.T) {
 	}
 
 	if len(s) != 2 {
-		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+		t.Fatalf("len(s) = %d, want %d", len(s), 2)
 	}
 
 	validateUser(t, s[0])
@@ -672,7 +672,7 @@ func Test_ListOrganizations_Success(t *testing.T) {
 	}
 
 	if len(s) != 1 {
-		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+		t.Fatalf("len(s) = %d, want %d", len(s), 1)
 	}
 
 	validateOrganization(t, s[0])
@@ -807,7 +807,7 @@ func Test_ListConversations_Success(t *testing.T) {
 	}
 
 	if len(s) != 1 {
-		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+		t.Fatalf("len(s) = %d, want %d", len(s), 1)
 	}
 
 	validateConversation(t, s[0])
@@ -935,6 +935,119 @@ func Test_DeleteInvite_Success(t *testing.T) {
 	defer server.Close()
 
 	err := client.DeleteInvite(3434978)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+}
+
+/*************************************************************************
+
+  Attachments
+
+*************************************************************************/
+
+func validateAttachment(t *testing.T, s Attachment) {
+	want := Attachment{
+		ID:        206942,
+		URL:       "https://media2.giphy.com/media/6ILhSOCGTMazK/giphy.gif",
+		Title:     "",
+		Animated:  true,
+		Type:      "image",
+		Image:     "https://media2.giphy.com/media/6ILhSOCGTMazK/giphy.gif",
+		Status:    "",
+		Width:     400,
+		Height:    225,
+		CreatedAt: time.Date(2015, time.February, 7, 8, 6, 12, 439000000, time.UTC),
+		UpdatedAt: time.Date(2015, time.February, 7, 8, 6, 12, 439000000, time.UTC),
+	}
+
+	diff, err := compare(s, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_ListAttachments_Success instantiates a new Client and calls the ListAttachments method
+// to return the available attachments.
+func Test_ListAttachments_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/listattachments.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/attachments", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListAttachments(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 8 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 8)
+	}
+
+	validateAttachment(t, s[0])
+}
+
+// Test_GetAttachment_Success instantiates a new Client and calls the GetAttachment method
+// to return a single attachment.
+func Test_GetAttachment_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getattachment.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with three messages
+	server, client := setupTestServer(200, dummy, want(t, "/attachments/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetAttachment(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateAttachment(t, m)
+}
+
+// Test_UpdateAttachment_Success instantiates a new Client and calls the UpdateAttachment method.
+func Test_UpdateAttachment_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getattachment.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"title":       "amazing",
+		"description": "so good",
+	}
+
+	// set up server to return 200 and message
+	server, client := setupTestServer(200, dummy, want(t, "/attachments/3434978", "PUT", wantData))
+	defer server.Close()
+
+	m, err := client.UpdateAttachment(3434978, url.Values{"title": []string{"amazing"}, "description": []string{"so good"}})
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateAttachment(t, m)
+}
+
+// Test_DeleteAttachment_Success instantiates a new Client and calls the DeleteAttachment method.
+func Test_DeleteAttachment_Success(t *testing.T) {
+	// set up server to return 204 and message
+	server, client := setupTestServer(204, []byte{}, want(t, "/attachments/3434978", "DELETE", nil))
+	defer server.Close()
+
+	err := client.DeleteAttachment(3434978)
 	if err != nil {
 		t.Fatal("got error:", err)
 	}
