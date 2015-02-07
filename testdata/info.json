@@ -1,0 +1,58 @@
+{
+  "configuration": {
+    "storage": {
+      "avatars": "sqwiggle-photos",
+      "clients": "sqwiggle-clients",
+      "uploads": "sqwiggle-user-uploads"
+    },
+    "commands": {
+      "/busy": "Change to busy, anything after the command becomes your status",
+      "/ping": "Pings the user you @mention",
+      "/brb": "Change to busy with a message of \"Be Right Back\"",
+      "/me": "Creates an action in the stream, \"eg\": /me waves",
+      "/status": "Add a status message to let everyone know what you're up to",
+      "/nick": "Changes your profile name",
+      "/mute": "Mutes your audio when in a conversation",
+      "/invite": "Sends an invite to the email address you type",
+      "/available": "Change to available, anything after the command becomes your status",
+      "/unbusy": "Removes busy status and message, setting you as available",
+      "/leave": "Leaves the current conversation",
+      "/dnd": "Changes to busy with a message of \"Do Not Disturb\"",
+      "/unmute": "Unmutes your audio when in a conversation",
+      "/gif": "Inserts a gif, type anything after the command to search"
+    },
+    "max_upload_filesize": 26214400,
+    "max_conversation_participants": 10,
+    "max_free_streams": 5,
+    "iceservers": [
+      {
+        "url": "stun:global.stun.twilio.com:3478?transport=udp"
+      },
+      {
+        "url": "turn:global.turn.twilio.com:3478?transport=udp",
+        "username": "0e4c8b77e788a6fd4019a8117dcdd04e8693b8b76197d22ce471e5cc13101340",
+        "credential": "2uJpitJ08aSb7uWmjQ93c8/0KWI3SzWiVmTWTg1W7Pg="
+      },
+      {
+        "url": "turn:turn.sqwiggle.com:3478?transport=tcp",
+        "credential": "5f4dcc3b5aa765d61d8327deb882cf99",
+        "username": "sqwiggle"
+      }
+    ],
+    "iceservers_expire_at": "2015-02-08T08:04:35.000+00:00"
+  },
+  "releases": {
+    "windows": {
+      "current": "0.0.0",
+      "minimum": "0.0.0"
+    },
+    "ios": {
+      "current": "0.1.2",
+      "minimum": "0.1.0"
+    },
+    "mac": {
+      "current": "0.6.5",
+      "minimum": "0.6.5"
+    }
+  }
+}

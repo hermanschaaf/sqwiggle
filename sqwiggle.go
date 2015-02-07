@@ -399,7 +399,7 @@ func (c *Client) ListOrganizations(page, limit int) ([]Organization, error) {
 	return o, err
 }
 
-// GetOrganization returns the reponse for GET /users/:id.
+// GetOrganization returns the reponse for GET /organizations/:id.
 // It retrieves the details of any user that the token
 // has access to. Supply an ID and Sqwiggle will return
 // the corresponding chat user object.
@@ -434,4 +434,24 @@ func (c *Client) UpdateOrganization(id int, values url.Values) (Organization, er
 	var o Organization
 	err = json.Unmarshal(b, &o)
 	return o, err
+}
+
+/*************************************************************************
+
+  Info
+
+*************************************************************************/
+
+// GetInfo returns the reponse for GET /info. This is an unstructured response,
+// so this endpoint just returns the raw byte slice.
+func (c *Client) GetInfo() ([]byte, error) {
+	p := fmt.Sprintf("/info")
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	return b, nil
 }

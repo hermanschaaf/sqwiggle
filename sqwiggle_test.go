@@ -725,3 +725,27 @@ func Test_UpdateOrganization_Success(t *testing.T) {
 
 	validateOrganization(t, m)
 }
+
+/*************************************************************************
+
+  Info
+
+*************************************************************************/
+
+// Test_GetInfo_Success instantiates a new Client and calls the GetInfo method
+// to return the current info as a byte slice.
+func Test_GetInfo_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/info.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with two organizations
+	server, client := setupTestServer(200, dummy, want(t, "/info", "GET", nil))
+	defer server.Close()
+
+	_, err = client.GetInfo()
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+}

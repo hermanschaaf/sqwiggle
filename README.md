@@ -10,7 +10,7 @@ Still under development, but early feedback welcome!
 
 - [ ] Attachments
 - [ ] Conversations
-- [ ] Info
+- [x] Info
 - [ ] Invites
 - [x] Messages
 - [x] Organizations
