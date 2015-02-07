@@ -749,3 +749,86 @@ func Test_GetInfo_Success(t *testing.T) {
 		t.Fatal("got error:", err)
 	}
 }
+
+/*************************************************************************
+
+  Conversations
+
+*************************************************************************/
+
+func validateConversation(t *testing.T, c Conversation) {
+	want := Conversation{
+		ID:            418925,
+		Status:        "",
+		CreatedAt:     time.Date(2015, time.February, 5, 7, 32, 59, 185000000, time.UTC),
+		Participating: []User{},
+		Participated: []User{
+			{ID: 50665,
+				Name:   "trin",
+				Avatar: "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png"},
+			{ID: 50654,
+				Name:   "Herman",
+				Avatar: "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png"},
+		},
+		Duration:  28,
+		ColorID:   1,
+		MCU:       false,
+		MCUServer: false,
+		Locked:    false,
+	}
+
+	diff, err := compare(c, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_ListConversations_Success instantiates a new Client and calls the ListOrganizations method
+// to return the known organizations.
+func Test_ListConversations_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/listconversations.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/conversations", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListConversations(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 1 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+	}
+
+	validateConversation(t, s[0])
+}
+
+// Test_GetConversation_Success instantiates a new Client and calls the GetOrganization method
+// to return a single organization.
+func Test_GetConversation_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getconversation.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with two organizations
+	server, client := setupTestServer(200, dummy, want(t, "/conversations/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetConversation(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateConversation(t, m)
+}

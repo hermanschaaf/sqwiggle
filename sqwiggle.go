@@ -455,3 +455,40 @@ func (c *Client) GetInfo() ([]byte, error) {
 	}
 	return b, nil
 }
+
+/*************************************************************************
+
+  Conversations
+
+*************************************************************************/
+
+// ListConversations returns a list of all conversations the current token has access to.
+func (c *Client) ListConversations(page, limit int) ([]Conversation, error) {
+	p := "/conversations"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var o []Conversation
+	err = json.Unmarshal(b, &o)
+	return o, err
+}
+
+// GetConversation retrieves the details of a specific conversation
+// provided it is accessible via the provided token.
+func (c *Client) GetConversation(id int) (Conversation, error) {
+	p := fmt.Sprintf("/conversations/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return Conversation{}, err
+	}
+	if status != http.StatusOK {
+		return Conversation{}, handleError(b)
+	}
+	var o Conversation
+	err = json.Unmarshal(b, &o)
+	return o, err
+}

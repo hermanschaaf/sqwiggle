@@ -9,7 +9,7 @@ Still under development, but early feedback welcome!
 #### Status:
 
 - [ ] Attachments
-- [ ] Conversations
+- [x] Conversations
 - [x] Info
 - [ ] Invites
 - [x] Messages
