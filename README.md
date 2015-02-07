@@ -11,7 +11,7 @@ Still under development, but early feedback welcome!
 - [ ] Attachments
 - [x] Conversations
 - [x] Info
-- [ ] Invites
+- [x] Invites
 - [x] Messages
 - [x] Organizations
 - [x] Streams

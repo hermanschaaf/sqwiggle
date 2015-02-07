@@ -492,3 +492,75 @@ func (c *Client) GetConversation(id int) (Conversation, error) {
 	err = json.Unmarshal(b, &o)
 	return o, err
 }
+
+/*************************************************************************
+
+  Invites
+
+*************************************************************************/
+
+// ListInvites returns a list of all outstanging invites in
+// the current organization.
+func (c *Client) ListInvites(page, limit int) ([]Invite, error) {
+	p := "/invites"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var s []Invite
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// GetInvite retrieves the details of any invite that has been
+// previously created. Supply an invite ID to get details of the invite.
+func (c *Client) GetInvite(id int) (Invite, error) {
+	p := fmt.Sprintf("/invites/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return Invite{}, err
+	}
+	if status != http.StatusOK {
+		return Invite{}, handleError(b)
+	}
+	var s Invite
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// PostInvite creates a new invite for the organization.
+// When an invite is created an email is automatically sent to the recipients
+// address asking them to join your organization. Please bear this in mind when
+// creating invites for test purposes, abuse of this API may result
+// in your account becoming blocked.
+func (c *Client) PostInvite(email string) (Invite, error) {
+	form := url.Values{}
+	form.Add("email", email)
+	b, status, err := c.request("/invites", "POST", form)
+	if err != nil {
+		return Invite{}, err
+	}
+	if status != http.StatusCreated {
+		return Invite{}, handleError(b)
+	}
+	var s Invite
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// DeleteInvite removes the specified invite from the organization. This will
+// result in the invite no longer working should the recipient click on the
+// link contained in the invite email.
+func (c *Client) DeleteInvite(id int) error {
+	b, status, err := c.request(fmt.Sprintf("/invites/%d", id), "DELETE", url.Values{})
+	if err != nil {
+		return err
+	}
+	if status != http.StatusNoContent {
+		return handleError(b)
+	}
+	return nil
+}

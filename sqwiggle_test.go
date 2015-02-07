@@ -832,3 +832,110 @@ func Test_GetConversation_Success(t *testing.T) {
 
 	validateConversation(t, m)
 }
+
+/*************************************************************************
+
+  Invites
+
+*************************************************************************/
+
+func validateInvite(t *testing.T, s Invite) {
+	want := Invite{
+		ID:        40322,
+		FromID:    50654,
+		Email:     "test@ironzebra.com",
+		Avatar:    "https://www.gravatar.com/avatar/3ff97465501f146621d12dfeed9b9428?d=https://s3.amazonaws.com/sqwiggle-global-assets/invite-default-avatar.png",
+		URL:       "https://www.sqwiggle.com/signup/1b7cbaedaa289e1587c8a470aeb58651",
+		CreatedAt: time.Date(2015, time.February, 7, 9, 6, 29, 757000000, time.UTC),
+	}
+
+	diff, err := compare(s, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_ListInvites_Success instantiates a new Client and calls the ListInvites method
+// to return the available invites.
+func Test_ListInvites_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/listinvites.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/invites", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListInvites(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 1 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+	}
+
+	validateInvite(t, s[0])
+}
+
+// Test_GetInvite_Success instantiates a new Client and calls the GetInvite method
+// to return a single invite.
+func Test_GetInvite_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getinvite.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with three messages
+	server, client := setupTestServer(200, dummy, want(t, "/invites/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetInvite(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateInvite(t, m)
+}
+
+// Test_PostInvite_Success instantiates a new Client and calls the PostInvite method.
+func Test_PostInvite_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getinvite.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"email": "h....n@ironzebra.com",
+	}
+
+	// set up server to return 201 and message
+	server, client := setupTestServer(201, dummy, want(t, "/invites", "POST", wantData))
+	defer server.Close()
+
+	m, err := client.PostInvite("h....n@ironzebra.com")
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateInvite(t, m)
+}
+
+// Test_DeleteInvite_Success instantiates a new Client and calls the DeleteInvite method.
+func Test_DeleteInvite_Success(t *testing.T) {
+	// set up server to return 204 and message
+	server, client := setupTestServer(204, []byte{}, want(t, "/invites/3434978", "DELETE", nil))
+	defer server.Close()
+
+	err := client.DeleteInvite(3434978)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+}
