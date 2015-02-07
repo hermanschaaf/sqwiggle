@@ -1,0 +1,24 @@
+{
+  "id": 21369,
+  "name": "IronZebra",
+  "user_count": 5,
+  "billing": {
+    "plan": null,
+    "receipts": false,
+    "status": "trial",
+    "email": null,
+    "active_card": false
+  },
+  "security": {
+    "open_invites": true,
+    "media_accept": false,
+    "domain_restrict": false,
+    "domain_signup": true,
+    "uploads_disabled": false,
+    "manual_disabled": false
+  },
+  "created_at": "2015-02-05T04:53:05.875Z",
+  "max_conversation_participants": 10,
+  "invite_url": "https://www.sqwiggle.com/signup/....",
+  "path": "ironzebra"
+}

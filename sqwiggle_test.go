@@ -563,7 +563,7 @@ func Test_ListUsers_Success(t *testing.T) {
 }
 
 // Test_GetUser_Success instantiates a new Client and calls the GetUser method
-// to return a single stream.
+// to return a single user.
 func Test_GetUser_Success(t *testing.T) {
 	dummy, err := ioutil.ReadFile("testdata/getuser.json")
 	if err != nil {
@@ -608,4 +608,120 @@ func Test_UpdateUser_Success(t *testing.T) {
 	}
 
 	validateUser(t, m)
+}
+
+/*************************************************************************
+
+  Organizations
+
+*************************************************************************/
+
+func validateOrganization(t *testing.T, u Organization) {
+	want := Organization{
+		ID:                          21369,
+		Name:                        "IronZebra",
+		CreatedAt:                   time.Date(2015, time.February, 5, 4, 53, 5, 875000000, time.UTC),
+		Path:                        "ironzebra",
+		UserCount:                   5,
+		MaxConversationParticipants: 10,
+		InviteURL:                   "https://www.sqwiggle.com/signup/....",
+		Billing: OrgBilling{
+			Plan:       "",
+			Receipts:   false,
+			Status:     "trial",
+			Email:      "",
+			ActiveCard: false,
+		},
+		Security: OrgSecurity{
+			OpenInvites:     true,
+			MediaAccept:     false,
+			DomainRestrict:  false,
+			UploadsDisabled: false,
+			ManualDisabled:  false,
+			DomainSignup:    true,
+		},
+	}
+
+	diff, err := compare(u, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_ListOrganizations_Success instantiates a new Client and calls the ListOrganizations method
+// to return the known organizations.
+func Test_ListOrganizations_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/listorganizations.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/organizations", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListOrganizations(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 1 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+	}
+
+	validateOrganization(t, s[0])
+}
+
+// Test_GetOrganization_Success instantiates a new Client and calls the GetOrganization method
+// to return a single organization.
+func Test_GetOrganization_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getorganization.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with two organizations
+	server, client := setupTestServer(200, dummy, want(t, "/organizations/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetOrganization(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateOrganization(t, m)
+}
+
+// Test_UpdateOrganization_Success instantiates a new Client and calls the UpdateOrganization method.
+func Test_UpdateOrganization_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getorganization.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"name":  "amazing",
+		"email": "yo@yo.com",
+	}
+
+	// set up server to return 200 and message
+	server, client := setupTestServer(200, dummy, want(t, "/organizations/3434978", "PUT", wantData))
+	defer server.Close()
+
+	values := url.Values{
+		"name":  []string{"amazing"},
+		"email": []string{"yo@yo.com"},
+	}
+	m, err := client.UpdateOrganization(3434978, values)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateOrganization(t, m)
 }

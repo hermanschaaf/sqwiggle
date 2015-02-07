@@ -375,3 +375,63 @@ func (c *Client) UpdateUser(id int, values url.Values) (User, error) {
 	err = json.Unmarshal(b, &m)
 	return m, err
 }
+
+/*************************************************************************
+
+  Organizations
+
+*************************************************************************/
+
+// ListOrganizations returns a list of all organizations the current token has access to.
+// At this time each user can only belong to a single organization and all
+// API requests are scoped by a single organization.
+func (c *Client) ListOrganizations(page, limit int) ([]Organization, error) {
+	p := "/organizations"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var o []Organization
+	err = json.Unmarshal(b, &o)
+	return o, err
+}
+
+// GetOrganization returns the reponse for GET /users/:id.
+// It retrieves the details of any user that the token
+// has access to. Supply an ID and Sqwiggle will return
+// the corresponding chat user object.
+func (c *Client) GetOrganization(id int) (Organization, error) {
+	p := fmt.Sprintf("/organizations/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return Organization{}, err
+	}
+	if status != http.StatusOK {
+		return Organization{}, handleError(b)
+	}
+	var o Organization
+	err = json.Unmarshal(b, &o)
+	return o, err
+}
+
+// Updates the specified organization by setting the values of the parameters passed.
+// At this time the only parameter that can be changed is the organization name,
+// paths will be automatically generated.
+//
+// Optional parameters are:
+//   name	The oranizations name
+func (c *Client) UpdateOrganization(id int, values url.Values) (Organization, error) {
+	b, status, err := c.request(fmt.Sprintf("/organizations/%d", id), "PUT", values)
+	if err != nil {
+		return Organization{}, err
+	}
+	if status != http.StatusOK {
+		return Organization{}, handleError(b)
+	}
+	var o Organization
+	err = json.Unmarshal(b, &o)
+	return o, err
+}
