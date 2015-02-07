@@ -15,6 +15,6 @@ Still under development, but early feedback welcome!
 - [x] Messages
 - [ ] Organizations
 - [x] Streams
-- [ ] Users
+- [x] Users
 
 MIT License

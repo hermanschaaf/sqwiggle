@@ -22,8 +22,10 @@ type User struct {
 	LastConnectedAt  time.Time  `json:"last_connected_at"` // The time this users current online session started
 
 	// undocumented:
-	Type    UserType `json:"type,omitempty"`
-	Support bool     `json:"support,omitempty"` // Indicates whether user is support or not (undocumented)
+	Type UserType `json:"type,omitempty"`
+	// IdleAt
+	// Contact
+	Support bool `json:"support,omitempty"` // Indicates whether user is support or not
 }
 
 // UserRole describes the role of a user, i.e. normal user, owner, manager or banned
@@ -46,10 +48,11 @@ func (ur UserRole) String() string {
 type UserStatus string
 
 // The below UserStatus constants define the typical states a user may
-// be in, i.e. "busy" or "available".
+// be in, i.e. "busy", "available" or "offline"
 const (
 	StatusBusy      UserStatus = "busy"
 	StatusAvailable            = "available"
+	StatusOffline              = "offline"
 )
 
 // UserType describes the type of user, i.e. normal user or support

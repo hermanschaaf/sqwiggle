@@ -240,7 +240,7 @@ func (c *Client) ListStreams(page, limit int) ([]Stream, error) {
 	return s, err
 }
 
-// GetStream returns the reponse for GET /stream/:id.
+// GetStream returns the reponse for GET /streams/:id.
 // It retrieves the details of any stream that the token
 // has access to. Supply an ID and Sqwiggle will return
 // the corresponding chat stream object.
@@ -305,4 +305,73 @@ func (c *Client) DeleteStream(id int) error {
 		return handleError(b)
 	}
 	return nil
+}
+
+/*************************************************************************
+
+  Users
+
+*************************************************************************/
+
+// ListUsers returns the reponse for GET /users.
+// It returns a list of all users in the current organization.
+func (c *Client) ListUsers(page, limit int) ([]User, error) {
+	p := "/users"
+	b, status, err := c.get(p, page, limit)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusOK {
+		return nil, handleError(b)
+	}
+	var s []User
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// GetUser returns the reponse for GET /users/:id.
+// It retrieves the details of any user that the token
+// has access to. Supply an ID and Sqwiggle will return
+// the corresponding chat user object.
+func (c *Client) GetUser(id int) (User, error) {
+	p := fmt.Sprintf("/users/%d", id)
+	b, status, err := c.get(p, 0, 0)
+	if err != nil {
+		return User{}, err
+	}
+	if status != http.StatusOK {
+		return User{}, handleError(b)
+	}
+	var s User
+	err = json.Unmarshal(b, &s)
+	return s, err
+}
+
+// UpdateUser updates the specified user by setting the values of the parameters passed.
+// Any parameters not provided will be left unchanged, and unrecognised parameters will
+// result in the request returning an error response.
+//
+// The parameters that may be set are:
+//
+//    name	The users full display name
+//    email	The users email address
+//    time_zone	The users time zone (in rails format)
+//    avatar	A URL pointing to the users avatar, this must reside on Sqwiggle's servers
+//    status	Status enum may be set to one of 'busy', 'available' or 'offline'
+//    message	A custom message which will be displayed to other users
+//    snapshot	A URL pointing to the users current snapshot
+//    snapshot_interval	An integer specifying how often an automatic snapshot should be taken, must be set to 0 or greater than 59
+//
+// All parameters are optional.
+func (c *Client) UpdateUser(id int, values url.Values) (User, error) {
+	b, status, err := c.request(fmt.Sprintf("/users/%d", id), "PUT", values)
+	if err != nil {
+		return User{}, err
+	}
+	if status != http.StatusOK {
+		return User{}, handleError(b)
+	}
+	var m User
+	err = json.Unmarshal(b, &m)
+	return m, err
 }

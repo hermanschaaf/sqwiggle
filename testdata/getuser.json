@@ -1,0 +1,22 @@
+{
+  "id": 50654,
+  "role": "user",
+  "status": "available",
+  "confirmed": true,
+  "message": ":cat2:",
+  "email": "h....n@ironzebra.com",
+  "name": "Herman Schaaf",
+  "avatar": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+  "time_zone": "Osaka",
+  "is_contact": false,
+  "contact": null,
+  "time_zone_offset": 9,
+  "snapshot": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+  "snapshot_interval": 60,
+  "last_active_at": "2015-02-06T14:16:44.625Z",
+  "last_connected_at": "2015-02-06T12:14:28.274Z",
+  "created_at": "2015-02-05T04:53:05.832Z",
+  "media_device_id": null,
+  "idle_at": null,
+  "support": false
+}

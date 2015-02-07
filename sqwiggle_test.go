@@ -499,3 +499,113 @@ func Test_DeleteStream_Success(t *testing.T) {
 		t.Fatal("got error:", err)
 	}
 }
+
+/*************************************************************************
+
+  Users
+
+*************************************************************************/
+
+func validateUser(t *testing.T, u User) {
+	want := User{
+		ID:               50654,
+		Role:             RoleUser,
+		MediaDeviceID:    "",
+		Status:           StatusAvailable,
+		Message:          ":cat2:",
+		Name:             "Herman Schaaf",
+		Email:            "h....n@ironzebra.com",
+		Avatar:           "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+		Snapshot:         "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+		SnapshotInterval: 60,
+		Confirmed:        true,
+		TimeZone:         "Osaka",
+		TimeZoneOffset:   9.0,
+		CreatedAt:        time.Date(2015, time.February, 5, 4, 53, 5, 832000000, time.UTC),
+		LastActiveAt:     time.Date(2015, time.February, 6, 14, 16, 44, 625000000, time.UTC),
+		LastConnectedAt:  time.Date(2015, time.February, 6, 12, 14, 28, 274000000, time.UTC),
+	}
+
+	diff, err := compare(u, want)
+	if err != nil {
+		t.Fatal("Failed to compare structs:", err)
+	}
+	for k, d := range diff {
+		t.Errorf("%q: got %q, want %q", k, d.a, d.b)
+	}
+}
+
+// Test_ListUsers_Success instantiates a new Client and calls the ListUsers method
+// to return the known users.
+func Test_ListUsers_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/listusers.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"page":  "5",
+		"limit": "3",
+	}
+	server, client := setupTestServer(200, dummy, want(t, "/users", "GET", wantData))
+	defer server.Close()
+
+	s, err := client.ListUsers(5, 3)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	if len(s) != 2 {
+		t.Fatalf("len(s) = %d, want %d", len(s), 3)
+	}
+
+	validateUser(t, s[0])
+}
+
+// Test_GetUser_Success instantiates a new Client and calls the GetUser method
+// to return a single stream.
+func Test_GetUser_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getuser.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// set up server to return 200 and message list response with two users
+	server, client := setupTestServer(200, dummy, want(t, "/users/48914", "GET", nil))
+	defer server.Close()
+
+	m, err := client.GetUser(48914)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateUser(t, m)
+}
+
+// Test_UpdateUser_Success instantiates a new Client and calls the UpdateUser method.
+func Test_UpdateUser_Success(t *testing.T) {
+	dummy, err := ioutil.ReadFile("testdata/getuser.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	wantData := map[string]string{
+		"name":  "amazing",
+		"email": "yo@yo.com",
+	}
+
+	// set up server to return 200 and message
+	server, client := setupTestServer(200, dummy, want(t, "/users/3434978", "PUT", wantData))
+	defer server.Close()
+
+	values := url.Values{
+		"name":  []string{"amazing"},
+		"email": []string{"yo@yo.com"},
+	}
+	m, err := client.UpdateUser(3434978, values)
+	if err != nil {
+		t.Fatal("got error:", err)
+	}
+
+	validateUser(t, m)
+}

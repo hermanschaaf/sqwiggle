@@ -1,0 +1,52 @@
+[
+  {
+    "id": 50654,
+    "role": "user",
+    "status": "available",
+    "confirmed": true,
+    "message": ":cat2:",
+    "email": "h....n@ironzebra.com",
+    "name": "Herman Schaaf",
+    "avatar": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+    "time_zone": "Osaka",
+    "is_contact": false,
+    "contact": null,
+    "time_zone_offset": 9,
+    "snapshot": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+    "snapshot_interval": 60,
+    "last_active_at": "2015-02-06T14:16:44.625Z",
+    "last_connected_at": "2015-02-06T12:14:28.274Z",
+    "created_at": "2015-02-05T04:53:05.832Z",
+    "media_device_id": null,
+    "idle_at": null,
+    "support": false
+  },
+  {
+    "id": 50657,
+    "role": "user",
+    "status": "available",
+    "confirmed": true,
+    "message": "",
+    "email": "t.......n123@gmail.com",
+    "name": "Toshiaki Takahashi",
+    "avatar": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+    "time_zone": "Osaka",
+    "is_contact": true,
+    "contact": {
+      "id": 331282,
+      "state": "approved",
+      "user_id": 50654,
+      "contact_id": 50657,
+      "created_at": "2015-02-05T05:03:35.888Z"
+    },
+    "time_zone_offset": 9,
+    "snapshot": "https://sqwiggle-assets.s3.amazonaws.com/assets/api/heart.png",
+    "snapshot_interval": 300,
+    "last_active_at": "2015-02-05T08:54:12.145Z",
+    "last_connected_at": "2015-02-05T05:08:58.494Z",
+    "created_at": "2015-02-05T04:59:03.864Z",
+    "media_device_id": null,
+    "idle_at": null,
+    "support": false
+  }
+]
