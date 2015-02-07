@@ -19,7 +19,7 @@ Still under development, but early feedback welcome!
 
 ALL DONE!! But still need to add some examples to the readme.
 
-See the [sqwiggle_test.go](swiggle_test.go) file for examples usage (until I find time to update the Readme with examples).
+See the [sqwiggle_test.go](sqwiggle_test.go) file for examples usage (until I find time to update the Readme with examples).
 
 ***** 
 
