@@ -13,7 +13,7 @@ Still under development, but early feedback welcome!
 - [ ] Info
 - [ ] Invites
 - [x] Messages
-- [ ] Organizations
+- [x] Organizations
 - [x] Streams
 - [x] Users
 
