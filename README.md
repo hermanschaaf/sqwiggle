@@ -4,9 +4,7 @@
 
 A Golang client library for the [Sqwiggle API](https://www.sqwiggle.com/docs/overview/getting-started). 
 
-Still under development, but early feedback welcome!
-
-#### Status:
+#### Supports
 
 - [x] Attachments
 - [x] Conversations
@@ -17,9 +15,11 @@ Still under development, but early feedback welcome!
 - [x] Streams
 - [x] Users
 
-ALL DONE!! But still need to add some examples to the readme.
+#### Docs
 
-See the [sqwiggle_test.go](sqwiggle_test.go) file for examples usage (until I find time to update the Readme with examples).
+[https://godoc.org/github.com/hermanschaaf/sqwiggle](https://godoc.org/github.com/hermanschaaf/sqwiggle)
+
+There are plenty more usage examples in [sqwiggle_test.go](sqwiggle_test.go).
 
 ***** 
 

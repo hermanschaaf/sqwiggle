@@ -110,7 +110,8 @@ func handleError(b []byte) error {
 
 // ListMessages returns the reponse for GET /messages.
 // It returns all messages in the current organization across all streams.
-// The messages are returned in reverse date order by default.
+// The messages are returned in reverse date order by default. If page
+// or limit is set to zero, the defaults are used.
 func (c *Client) ListMessages(page, limit int) ([]Message, error) {
 	p := "/messages"
 	b, status, err := c.get(p, page, limit)
