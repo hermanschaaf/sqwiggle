@@ -418,7 +418,7 @@ func (c *Client) GetOrganization(id int) (Organization, error) {
 	return o, err
 }
 
-// Updates the specified organization by setting the values of the parameters passed.
+// UpdateOrganization updates the specified organization by setting the values of the parameters passed.
 // At this time the only parameter that can be changed is the organization name,
 // paths will be automatically generated.
 //

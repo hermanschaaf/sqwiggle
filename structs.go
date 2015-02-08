@@ -16,7 +16,7 @@ type attr struct {
 	b interface{}
 }
 
-var errNilInterface error = fmt.Errorf("One of the interfaces is nil")
+var errNilInterface = fmt.Errorf("One of the interfaces is nil")
 
 // compare compares two structs and returns a map containing the differences between them.
 // This is not optimized for efficiency, and is only meant to be used in testing. It

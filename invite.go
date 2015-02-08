@@ -2,6 +2,7 @@ package sqwiggle
 
 import "time"
 
+// Invite describes an invitation sent out to a user to join the organization
 type Invite struct {
 	ID        int       `json:"id"`
 	FromID    int       `json:"from_id"`    // ID of the user that created the invite
